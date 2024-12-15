@@ -1,10 +1,15 @@
 # /// script
 # requires-python = ">=3.9"
 # dependencies = [
-#     "matplotlib",
-#     "pandas",
-#     "requests",
-#     "seaborn",
+#   "chardet>=5.2.0",
+#   "matplotlib>=3.9.3",
+#   "numpy>=2.2.0",
+#   "openai>=1.57.2",
+#   "pandas>=2.2.3",
+#   "python-dotenv>=1.0.1",
+#   "requests>=2.32.3",
+#   "scikit-learn>=1.6.0",
+#   "seaborn>=0.13.2",
 # ]
 # ///
 
@@ -26,14 +31,25 @@ COST_PER_1000_TOKENS = 0.03  # Replace with the correct rate for GPT-4o-mini
 total_tokens_used = 0
 total_api_calls = 0
 
-# Function to load the dataset
+import chardet  # To detect encoding (install with pip if not already installed)
+
+# Function to load the dataset with automatic encoding detection
 def load_dataset(filename):
     try:
-        data = pd.read_csv(filename)
+        # Detect encoding
+        with open(filename, 'rb') as f:
+            raw_data = f.read()
+            detected = chardet.detect(raw_data)
+            encoding = detected['encoding']
+        
+        # Load dataset with detected encoding
+        data = pd.read_csv(filename, encoding=encoding)
+        print(f"File {filename} loaded successfully with {encoding} encoding.")
         return data
     except Exception as e:
         print(f"Error loading file {filename}: {e}")
         sys.exit(1)
+
 
 # Function to analyze the dataset
 def analyze_dataset(data):

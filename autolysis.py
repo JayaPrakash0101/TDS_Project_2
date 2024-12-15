@@ -1,15 +1,23 @@
+# /// script
+# requires-python = ">=3.9"
+# dependencies = [
+#     "matplotlib",
+#     "pandas",
+#     "requests",
+#     "seaborn",
+# ]
+# ///
+
 import os
 import sys
 import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
 from io import StringIO
-
-
 import requests
-from google.colab import userdata
 
-api_key = userdata.get("AIPROXY_TOKEN")
+# Retrieve the AI Proxy token from the environment variable
+api_key = os.environ.get("AIPROXY_TOKEN")
 
 # Define the token cost per 1,000 tokens (adjust based on OpenAI pricing)
 COST_PER_1000_TOKENS = 0.03  # Replace with the correct rate for GPT-4o-mini
@@ -178,9 +186,12 @@ def print_usage_statistics():
     
 # Main function
 def main():
-    # Use a sample dataset path for Colab
-    dataset_path = "/content/goodreads.csv"
-    print("Using sample dataset:", dataset_path)
+    if len(sys.argv) < 2:
+        print("Usage: python autolysis.py <dataset.csv>")
+        sys.exit(1)
+
+    dataset_path = sys.argv[1]
+    print("Using dataset:", dataset_path)
 
     # Load, analyze, and visualize the dataset
     data = load_dataset(dataset_path)
